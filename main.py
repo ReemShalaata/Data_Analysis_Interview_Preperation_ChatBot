@@ -2,7 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd 
 import random
-from utils.other_utils 
+from utils.other_utils import use
 
 dataset = pd.read_excel('training_dataset.xlsx') 
 num_samples=5
