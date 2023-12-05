@@ -35,7 +35,7 @@ elif 1 <= st.session_state.question_number <= 5:
     expected_answers_list.append(expected_answer)
     user_answers_list.append(user_answer)
 else:
-    final_page(questions_list,user_answers_list)
+    final_page(questions_list,user_answers_list,expected_answers_list)
 
 col1, col2, col3 = st.columns(3)
 with col1:

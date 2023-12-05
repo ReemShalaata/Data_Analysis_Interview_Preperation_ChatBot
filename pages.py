@@ -5,6 +5,7 @@ import random
 import os
 import pandas as pd
 from utils.style_utils import changeradiotfontsize
+from models.functions import provide_feedback
 
 
 # Content of the home page
@@ -51,6 +52,27 @@ def question_page(dataset,question_num,samples_indices):
     return question,expected_answer,user_answer
 
 # Content of the final page
-def final_page():
-    st.title("End of the Guide")
-    st.write("You have completed the guide!")
+def final_page(questions_list,user_answers_list,expected_answers_list):
+    st.title("Feedback")
+    feedback_list,stars_list=provide_feedback(questions_list,user_answers_list,expected_answers_list)
+    for index,item in enumerate(questions_list):
+        question_num=index+1
+        formatted_question = format_text(text=f"Question {question_num} : {questions_list[question_num]}",
+                                        alignment='left', size=30, color="#5fb93f", 
+                                        font_family="Copperplate", font_weight="Bold", emoji="<br><br>")
+        st.markdown(formatted_question, unsafe_allow_html=True)
+
+        formatted_user_answer = format_text(text=f"Your Answer :{user_answers_list[question_num]}",
+                                        alignment='left', size=30, color="#5fb93f", 
+                                        font_family="Copperplate", font_weight="Bold", emoji="<br><br>")
+        st.markdown(formatted_user_answer unsafe_allow_html=True)
+
+        formatted_stars_feedback = format_text(text=f"{stars_list[question_num]} /n ",
+                                        alignment='left', size=30, color="#5fb93f", 
+                                        font_family="Copperplate", font_weight="Bold", emoji="<br><br>")
+        st.markdown(formatted_stars_feedback, unsafe_allow_html=True)
+
+        formatted_words_feedback = format_text(text=f"{feedback_list[question_num]} /n ",
+                                        alignment='left', size=30, color="#5fb93f", 
+                                        font_family="Copperplate", font_weight="Bold", emoji="<br><br>")
+        st.markdown(formatted_words_feedback , unsafe_allow_html=True)
