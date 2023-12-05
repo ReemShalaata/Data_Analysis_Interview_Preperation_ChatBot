@@ -37,9 +37,10 @@ def question_page(dataset,question_num,samples_indices):
                                     font_family="Copperplate", font_weight="Bold", emoji="<br><br>")
     st.markdown(formatted_title, unsafe_allow_html=True)
 
-    questin=f"{dataset.iloc[samples_indices[question_num-1]]['Question']}"
+    question=f"{dataset.iloc[samples_indices[question_num-1]]['Question']}"
+    expected_answer=f"{dataset.iloc[samples_indices[question_num-1]]['Answer']}"
      # Using st.markdown with custom styling
-    formatted_question = format_text(text=f"{questin}",
+    formatted_question = format_text(text=f"{question}",
                                     alignment='left', size=16, color="black", 
                                     font_family="Arial", font_weight="normal", emoji="<br>")
     st.markdown(formatted_question, unsafe_allow_html=True)
@@ -47,7 +48,7 @@ def question_page(dataset,question_num,samples_indices):
 
     user_answer=user_answer_input()
 
-    return user_answer
+    return question,expected_answer,user_answer
 
 # Content of the final page
 def final_page():

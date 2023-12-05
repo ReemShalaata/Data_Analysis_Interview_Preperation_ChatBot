@@ -9,8 +9,12 @@ from static.styles import custom_css
 import os 
 
 
-st.markdown(custom_css(),unsafe_allow_html=True)
+questions_list=[]
+user_answers_list=[]
+expected_answers_list=[]
+feedback_list=[]
 
+st.markdown(custom_css(),unsafe_allow_html=True)
 dataset = pd.read_excel(os.path.join('data','training_dataset.xlsx'))
 num_samples=5
 st.session_state.samples_indices = random.sample(range(dataset.shape[0]), num_samples)
@@ -26,9 +30,12 @@ elif st.session_state.question_number == 0:
     set_background("white")
     choose_difficulty_page()
 elif 1 <= st.session_state.question_number <= 5:
-    question_page(dataset,st.session_state.question_number,st.session_state.samples_indices )
+    question,expected_answer,user_answer=question_page(dataset,st.session_state.question_number,st.session_state.samples_indices )
+    questions_list.append(question)
+    expected_answers_list.append(expected_answer)
+    user_answers_list.append(user_answer)
 else:
-    final_page()
+    final_page(questions_list,user_answers_list)
 
 col1, col2, col3 = st.columns(3)
 with col1:
