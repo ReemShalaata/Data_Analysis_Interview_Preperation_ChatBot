@@ -36,8 +36,8 @@ def changeradiotfontsize(wgt_txt, wch_font_size = '12px'):
     components.html(f"{htmlstr}", height=0, width=0)
 
 
-def user_answer_input():
-    user_answer= st.text_area("")
+def user_answer_input(question_num):
+    user_answer= st.text_area("",key=f"answer{question_num}")
     return user_answer
 
 def set_background(color):

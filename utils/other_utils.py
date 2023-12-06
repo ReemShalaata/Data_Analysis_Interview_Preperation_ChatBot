@@ -8,8 +8,12 @@ import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd 
 import random
-
-
+from models.functions import train_model_to_generate_data
+def check_database_exists():
+    #check if the generated data exists before
+    for file_name in ['Easy','Medium','Difficult']:
+        if not os.path.exists(os.path.join('data',file_name)):
+            train_model_to_generate_data(file_name)
 
 # Callback functions
 def increment_question_number():
@@ -42,4 +46,3 @@ def evaluate_answer(expected_answer,user_answer):
     print(f"Expected Answer: {user_answer}")
     print(f"User's Answer: {expected_answer}")
     print(f"Cosine similarity score: {similarity[0][0]}")
-

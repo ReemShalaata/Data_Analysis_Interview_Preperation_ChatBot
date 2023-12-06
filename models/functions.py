@@ -6,17 +6,17 @@ import openai
 from openai import OpenAI
 import pandas as pd
 client=OpenAI()
-def train_model_to_generate_data(difficulty_level,num_generated_samples=2):
+def train_model_to_generate_data(difficulty_level,num_generated_samples=10):
     openai_api_key  = os.getenv('OPENAI_API_KEY')
     openai.api_key = openai_api_key
     difficulty=difficulty_level.capitalize()
     dataset = pd.read_excel(os.path.join('data','training_dataset.xlsx'))
     # Create a new question prompt
     new_question_prompt = (
-    f"As a data analysis interviewer, generate 10 unique data analysis interview questions, each covering a different topic. "
+    f"As a data analysis interviewer, generate f'{difficulty}' level data analysis interview questions, each covering a different topic. "
     "Provide answers for each question. Structure the output as follows:"
 
-    "- A list containing 6 dictionaries. containing half andd half 'Technical' and 'Behaviioural' questions\n"
+    "- A list containing 6 dictionaries. containing half andd half 'Technical' and 'Behavioural' questions\n"
     f"- The output should be a list containing a total of {num_generated_samples} dictionaries.\n"
     "The dictionaries are evenly divided between 'Technical' and 'Behavioral' questions.ie the number of technichal and behavioural questions is the same\n"
     "- Each dictionary should have exactly three keys: 'Question', 'Answer', 'Category'.\n"
@@ -62,57 +62,38 @@ def train_model_to_generate_data(difficulty_level,num_generated_samples=2):
     generated_dataset.to_excel(os.path.join('data',f'{difficulty}_level_generated_dataset.xlsx'), index=False)
     return
 
-train_model_to_generate_data('EaSy')
-#     for _ in range(num_batches):
-#         prompt_examples = ""
-#         for _, row in dataset.sample(min(len(dataset), questions_per_batch)).iterrows():
-#             prompt_examples += f"Question: {row['Question']}\nAnswer: {row['Answer']}\nCategory: {row['Category']}\nDifficulty: {row['Difficulty']}\n\n"
-
-#         new_question_prompt = (
-#             "As a data analysis interviewer, generate data analysis interview questions and provide their answers. "
-#             "The answers should be at least 30 words. "
-#             "The output should explicitly include the interviewer's question and the corresponding answer as a dictionary. "
-#             "The dictionary should also include the difficulty of the question ['Technical', 'Behavioral']. "
-#             "The dictionary should also include the category of the question ['Easy', 'Medium', 'Hard']. "
-#             "The dictionary must have only four keys ['Question', 'Answer', 'Category', 'Difficulty'].\n"
-#         )
-
-#         prompt_examples += new_question_prompt
-
-#         response = openai.Completion.create(
-#             model="gpt-3.5-turbo-16k",
-#             prompt=prompt_examples,
-#             max_tokens=150 * questions_per_batch  # Adjust based on your needs
-#         )
-
-#         response_text = response.choices[0].text.strip()
-#         response_dicts = ast.literal_eval("[" + response_text + "]")  # Assuming the output is a list of dictionaries
-
-#         for resp_dict in response_dicts:
-#             all_questions = all_questions.append(resp_dict, ignore_index=True)
-
-#         if len(all_questions) >= 50:
-#             break
-
-#     all_questions.to_excel("data_analysis_questions.xlsx")
-#     return "Excel file with questions generated successfully."
-
-# # Example usage
-# batch_generate_questions('data_analysis_interview__qa.xlsx', 10, 5)
-
-def get_feedback(generated_question, user_answer, expected_answer):
-    prompt = (f"Question: {generated_question}\n"
-              f"Expected Answer: {expected_answer}\n"
-              f"User's Answer: {user_answer}\n\n"
-              "Provide detailed feedback on the user's answer for the generated quesion, comparing it with the expected answer and pointing out"
-              "any inaccuracies, areas of improvement, or aspects that are well addressed."
-              "The output feedback should not be more than 50 words")
 
 
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{'role': 'user', 'content': prompt}],
-        max_tokens=150
-    )
+def encode(text):
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    return model.encode(text, convert_to_tensor=True,device='cuda')
 
-    return response.choices[0].message.content
+def provide_feedback(questions_list,user_answers_list,expected_answers_list):
+    feedback_list=[]
+    stars_list=[]
+    feedback=""
+    for index,item in enumerate(questions_list):
+        # Encoding
+        expected_answer_vec = encode(expected_answers_list[index]).unsqueeze(0).cpu()
+        user_answer_vec = encode(user_answers_list[index]).unsqueeze(0).cpu()
+        similarity = abs(cosine_similarity(expected_answer_vec, user_answer_vec)[0][0])
+        if similarity>0.7:
+            feedback="Good job!"
+        else:
+            feedback=f"Your answer is a bit brief. It can be improved by providing more details\n Check the hint {expected_answers_list[index]}"
+        print(similarity)
+        feedback_list.append(feedback)
+        stars_list.append(rating_to_stars(similarity))
+        return feedback_list,stars_list
+            
+
+def rating_to_stars(rating):
+    max_stars = 5  # Maximum number of stars in the rating
+    filled_stars = int(round(rating*max_stars))  # Round the rating to the nearest whole number
+    empty_stars = max_stars - filled_stars
+
+    # Create a string representation of the stars
+    stars = '★' * filled_stars + '☆' * empty_stars
+    print(stars)
+
+    return stars

@@ -2,26 +2,30 @@ import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd 
 import random
-from utils.other_utils import increment_question_number,decrement_question_number
+from models.functions import train_model_to_generate_data,provide_feedback
+from utils.other_utils import increment_question_number,decrement_question_number,check_database_exists
 from utils.style_utils import set_background, changewidgetfontstyle
 from pages import home_page,choose_difficulty_page,question_page,final_page
 from static.styles import custom_css
+
 import os 
 
+#Let's first check if datasets exist 
+# check_database_exists()
 
-questions_list=[]
-user_answers_list=[]
-expected_answers_list=[]
-feedback_list=[]
-
-st.markdown(custom_css(),unsafe_allow_html=True)
 dataset = pd.read_excel(os.path.join('data','training_dataset.xlsx'))
 num_samples=5
 st.session_state.samples_indices = random.sample(range(dataset.shape[0]), num_samples)
+
+st.markdown(custom_css(),unsafe_allow_html=True)
+
 # Initialize session state for question number
 if 'question_number' not in st.session_state:
     st.session_state.question_number = -1
-    
+    st.session_state.questions_list=[]
+    st.session_state.user_answers_list=[]
+    st.session_state.expected_answers_list=[]
+        
 # Page rendering logic
 if st.session_state.question_number == -1:
     set_background("black")  # Replace with your desired colors
@@ -31,11 +35,11 @@ elif st.session_state.question_number == 0:
     choose_difficulty_page()
 elif 1 <= st.session_state.question_number <= 5:
     question,expected_answer,user_answer=question_page(dataset,st.session_state.question_number,st.session_state.samples_indices )
-    questions_list.append(question)
-    expected_answers_list.append(expected_answer)
-    user_answers_list.append(user_answer)
+    st.session_state.questions_list.append(question)
+    st.session_state.expected_answers_list.append(expected_answer)
+    st.session_state.user_answers_list.append(user_answer)
 else:
-    final_page(questions_list,user_answers_list,expected_answers_list)
+    final_page(st.session_state.questions_list,st.session_state.user_answers_list,st.session_state.expected_answers_list)
 
 col1, col2, col3 = st.columns(3)
 with col1:

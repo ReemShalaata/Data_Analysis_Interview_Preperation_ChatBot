@@ -28,51 +28,121 @@ def choose_difficulty_page():
     
  
     st.session_state.difficulty = difficulty
+    return difficulty
 
 # Content of the question pages
 def question_page(dataset,question_num,samples_indices):
 
-    # Using st.markdown with custom styling
+    question=f"{dataset.iloc[samples_indices[question_num-1]]['Question']}"
+    question_category=f"{dataset.iloc[samples_indices[question_num-1]]['Category']}"   
+    expected_answer=f"{dataset.iloc[samples_indices[question_num-1]]['Answer']}"
+
+    # Question Number ---Using st.markdown with custom styling  
     formatted_title = format_text(text=f"Question {question_num}",
                                     alignment='left', size=30, color="#5fb93f", 
+                                    font_family="Copperplate", font_weight="Bold", emoji="<br>")
+    st.markdown(formatted_title, unsafe_allow_html=True)
+
+
+     # Question content ---Using st.markdown with custom styling
+    formatted_title = format_text(text=f"* {question_category}",
+                                    alignment='left', size=16, color="red", 
                                     font_family="Copperplate", font_weight="Bold", emoji="<br><br>")
     st.markdown(formatted_title, unsafe_allow_html=True)
 
-    question=f"{dataset.iloc[samples_indices[question_num-1]]['Question']}"
-    expected_answer=f"{dataset.iloc[samples_indices[question_num-1]]['Answer']}"
-     # Using st.markdown with custom styling
+     # Question content ---Using st.markdown with custom styling
     formatted_question = format_text(text=f"{question}",
                                     alignment='left', size=16, color="black", 
                                     font_family="Arial", font_weight="normal", emoji="<br>")
-    st.markdown(formatted_question, unsafe_allow_html=True)
-       
 
-    user_answer=user_answer_input()
+    st.markdown(formatted_question, unsafe_allow_html=True)      
+
+    user_answer=user_answer_input(question_num)
 
     return question,expected_answer,user_answer
 
 # Content of the final page
 def final_page(questions_list,user_answers_list,expected_answers_list):
-    st.title("Feedback")
-    feedback_list,stars_list=provide_feedback(questions_list,user_answers_list,expected_answers_list)
-    for index,item in enumerate(questions_list):
-        question_num=index+1
-        formatted_question = format_text(text=f"Question {question_num} : {questions_list[question_num]}",
-                                        alignment='left', size=30, color="#5fb93f", 
-                                        font_family="Copperplate", font_weight="Bold", emoji="<br><br>")
+    # Title
+    st.markdown(
+        format_text(
+            text="Quiz Results \n\n\n",
+            alignment="center",
+            size=50,
+            color="#1E90FF",
+            font_family="Copperplate",
+            font_weight="Bold",
+            emoji="",
+        ),
+        unsafe_allow_html=True,
+    )
+
+    # Summary Introduction
+    st.markdown(
+        format_text(
+            text="Thank you for completing the quiz. Here is a summary of your performance ",
+            alignment="center",
+            size=16,
+            color="black",
+            font_family="Arial",
+            font_weight="normal",
+            emoji="<br><br><br>",
+        ),
+        unsafe_allow_html=True,
+    )
+
+
+    # Feedback
+    feedback_list, stars_list = provide_feedback(
+        questions_list, user_answers_list, expected_answers_list
+    )
+
+    for index, item in enumerate(questions_list):
+        question_num = index + 1
+        # Display Question
+        formatted_question = format_text(
+            text=f"Question {question_num}: {questions_list[question_num]}",
+            alignment="left",
+            size=16,
+            color="black",
+            font_family="Copperplate",
+            font_weight="Bold",
+            emoji="",
+        )
         st.markdown(formatted_question, unsafe_allow_html=True)
 
-        formatted_user_answer = format_text(text=f"Your Answer :{user_answers_list[question_num]}",
-                                        alignment='left', size=30, color="#5fb93f", 
-                                        font_family="Copperplate", font_weight="Bold", emoji="<br><br>")
-        st.markdown(formatted_user_answer unsafe_allow_html=True)
+        # Display User Answer
+        formatted_user_answer = format_text(
+            text=f"Your Answer: {user_answers_list[question_num]}",
+            alignment="left",
+            size=16,
+            color="black",
+            font_family="Copperplate",
+            font_weight="Bold",
+            emoji="<br>",
+        )
+        st.markdown(formatted_user_answer, unsafe_allow_html=True)
 
-        formatted_stars_feedback = format_text(text=f"{stars_list[question_num]} /n ",
-                                        alignment='left', size=30, color="#5fb93f", 
-                                        font_family="Copperplate", font_weight="Bold", emoji="<br><br>")
+        # Display Stars Feedback
+        formatted_stars_feedback = format_text(
+            text=f"{stars_list[question_num-1]}  ",
+            alignment="center",
+            size=30,
+            color="#FFBF00",
+            font_family="Copperplate",
+            font_weight="Bold",
+            emoji="",
+        )
         st.markdown(formatted_stars_feedback, unsafe_allow_html=True)
 
-        formatted_words_feedback = format_text(text=f"{feedback_list[question_num]} /n ",
-                                        alignment='left', size=30, color="#5fb93f", 
-                                        font_family="Copperplate", font_weight="Bold", emoji="<br><br>")
-        st.markdown(formatted_words_feedback , unsafe_allow_html=True)
+        # Display Words Feedback
+        formatted_words_feedback = format_text(
+            text=f"{feedback_list[question_num-1]} ",
+            alignment="center",
+            size=20,
+            color="#b93f5f",
+            font_family="Copperplate",
+            font_weight="Bold",
+            emoji="<br><br><br>",
+        )
+        st.markdown(formatted_words_feedback, unsafe_allow_html=True)
