@@ -23,7 +23,15 @@ def decrement_question_number():
     if st.session_state.question_number > 0:
         st.session_state.question_number -= 1
 
-
+def sample_data(dataset,samples_indices):
+    questions=[]
+    categories=[]
+    answers=[]
+    for i in range(len(samples_indices)):
+        questions.append(f"{dataset.iloc[samples_indices[i]]['Question']}")
+        categories.append(f"{dataset.iloc[samples_indices[i]]['Category']}")
+        answers.append(f"{dataset.iloc[samples_indices[i]]['Answer']}")
+    return categories,questions,answers
 
 def suggest_question(generated_dataset,category,difficulty_level):
     filtered_dataset = generated_dataset[(generated_dataset['Category']==category) & (generated_dataset['Difficulty'] == difficulty_level)] 

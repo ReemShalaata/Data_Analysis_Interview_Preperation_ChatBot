@@ -66,7 +66,7 @@ def train_model_to_generate_data(difficulty_level,num_generated_samples=10):
 
 def encode(text):
     model = SentenceTransformer('all-MiniLM-L6-v2')
-    return model.encode(text, convert_to_tensor=True,device='cuda')
+    return model.encode(text, convert_to_tensor=True,device='cpu')
 
 def provide_feedback(questions_list,user_answers_list,expected_answers_list):
     feedback_list=[]
@@ -81,10 +81,10 @@ def provide_feedback(questions_list,user_answers_list,expected_answers_list):
             feedback="Good job!"
         else:
             feedback=f"Your answer is a bit brief. It can be improved by providing more details\n Check the hint {expected_answers_list[index]}"
-        print(similarity)
         feedback_list.append(feedback)
         stars_list.append(rating_to_stars(similarity))
-        return feedback_list,stars_list
+
+    return feedback_list,stars_list
             
 
 def rating_to_stars(rating):

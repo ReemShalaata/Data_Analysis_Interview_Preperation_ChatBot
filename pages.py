@@ -31,11 +31,11 @@ def choose_difficulty_page():
     return difficulty
 
 # Content of the question pages
-def question_page(dataset,question_num,samples_indices):
+def question_page(question_num,categorty_list,questions_list,):
 
-    question=f"{dataset.iloc[samples_indices[question_num-1]]['Question']}"
-    question_category=f"{dataset.iloc[samples_indices[question_num-1]]['Category']}"   
-    expected_answer=f"{dataset.iloc[samples_indices[question_num-1]]['Answer']}"
+    question=f"{questions_list[question_num-1]}"
+    question_category =f"{categorty_list[question_num-1]}"  
+
 
     # Question Number ---Using st.markdown with custom styling  
     formatted_title = format_text(text=f"Question {question_num}",
@@ -59,7 +59,7 @@ def question_page(dataset,question_num,samples_indices):
 
     user_answer=user_answer_input(question_num)
 
-    return question,expected_answer,user_answer
+    return user_answer
 
 # Content of the final page
 def final_page(questions_list,user_answers_list,expected_answers_list):
@@ -98,10 +98,9 @@ def final_page(questions_list,user_answers_list,expected_answers_list):
     )
 
     for index, item in enumerate(questions_list):
-        question_num = index + 1
         # Display Question
         formatted_question = format_text(
-            text=f"Question {question_num}: {questions_list[question_num]}",
+            text=f"Question {index+1}: {questions_list[index]}",
             alignment="left",
             size=16,
             color="black",
@@ -113,7 +112,7 @@ def final_page(questions_list,user_answers_list,expected_answers_list):
 
         # Display User Answer
         formatted_user_answer = format_text(
-            text=f"Your Answer: {user_answers_list[question_num]}",
+            text=f"Your Answer: {user_answers_list[index]}",
             alignment="left",
             size=16,
             color="black",
@@ -124,8 +123,9 @@ def final_page(questions_list,user_answers_list,expected_answers_list):
         st.markdown(formatted_user_answer, unsafe_allow_html=True)
 
         # Display Stars Feedback
+
         formatted_stars_feedback = format_text(
-            text=f"{stars_list[question_num-1]}  ",
+            text=f"{stars_list[index]}  ",
             alignment="center",
             size=30,
             color="#FFBF00",
@@ -137,7 +137,7 @@ def final_page(questions_list,user_answers_list,expected_answers_list):
 
         # Display Words Feedback
         formatted_words_feedback = format_text(
-            text=f"{feedback_list[question_num-1]} ",
+            text=f"{feedback_list[index]} ",
             alignment="center",
             size=20,
             color="#b93f5f",
