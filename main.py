@@ -7,11 +7,13 @@ from utils.other_utils import increment_question_number,decrement_question_numbe
 from utils.style_utils import set_background, changewidgetfontstyle
 from pages import home_page,choose_difficulty_page,question_page,final_page
 from static.styles import custom_css
+import numpy as np
 import os 
 
+choosen_num_of_question=5
 # Function to load data with caching
 @st.cache_data()
-def load_data( choosen_num_of_question = 5):
+def load_data( choosen_num_of_question = choosen_num_of_question):
     # Read the dataset
     dataset = pd.read_excel(os.path.join('data', 'training_dataset.xlsx'))
     # Sample random indices for questions
@@ -20,15 +22,16 @@ def load_data( choosen_num_of_question = 5):
     category_list, questions_list, expected_answers_list = sample_data(dataset, samples_indices)
     return dataset, samples_indices, category_list, questions_list, expected_answers_list
 
-# Load the data
-dataset, samples_indices, category_list, questions_list, expected_answers_list = load_data()
 
+# Load the data and variables
+dataset, samples_indices, category_list, questions_list, expected_answers_list = load_data()
 st.markdown(custom_css(),unsafe_allow_html=True)
 
 # Initialize session state for question number
 if 'question_number' not in st.session_state:
     st.session_state.question_number = -1
-    st.session_state.user_answers_list=[]
+    st.session_state.user_answers_list=['']*choosen_num_of_question
+    st.session_state.max_question_reached=0   
 
         
 # Page rendering logic
@@ -39,8 +42,11 @@ elif st.session_state.question_number == 0:
     set_background("white")
     choose_difficulty_page()
 elif 1 <= st.session_state.question_number <= 5 :
+        if st.session_state.max_question_reached<st.session_state.question_number:
+            st.session_state.max_question_reached=st.session_state.question_number
         user_answer=question_page(st.session_state.question_number,category_list,questions_list)
-        st.session_state.user_answers_list.append(user_answer)
+        st.session_state.user_answers_list[st.session_state.question_number-1]=user_answer
+
 else:
     final_page(questions_list,st.session_state.user_answers_list,expected_answers_list)
 
@@ -64,7 +70,7 @@ with col3:
         changewidgetfontstyle(wgt_txt="Next",font_size='20px', font_family='Arial', font_weight='normal', text_align='center')
 
 
+
     elif st.session_state.question_number == 5:        
         st.button("Submit 👍", on_click=increment_question_number, key="submit",)
         changewidgetfontstyle(wgt_txt="Submit 👍",font_size='20px', font_family='Arial', font_weight='bold', text_align='center')
-

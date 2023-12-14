@@ -57,7 +57,7 @@ def question_page(question_num,categorty_list,questions_list,):
 
     st.markdown(formatted_question, unsafe_allow_html=True)      
 
-    user_answer=user_answer_input(question_num)
+    user_answer=user_answer_input(st.session_state.question_number,st.session_state.max_question_reached)
 
     return user_answer
 
@@ -139,10 +139,10 @@ def final_page(questions_list,user_answers_list,expected_answers_list):
         formatted_words_feedback = format_text(
             text=f"{feedback_list[index]} ",
             alignment="center",
-            size=20,
+            size=16,
             color="#b93f5f",
             font_family="Copperplate",
             font_weight="Bold",
-            emoji="<br><br><br>",
+            emoji="<br><br><br><br><br>",
         )
         st.markdown(formatted_words_feedback, unsafe_allow_html=True)
