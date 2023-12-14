@@ -57,7 +57,7 @@ def user_answer_input(question_num,max_question_reached):
 def set_background(color):
     # Using the provided color
     st.markdown(
-        f"""
+        f"""1
         <style>
         .stApp {{
             background-color: {color};
