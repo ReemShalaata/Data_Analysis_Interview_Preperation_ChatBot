@@ -36,10 +36,24 @@ def changeradiotfontsize(wgt_txt, wch_font_size = '12px'):
     components.html(f"{htmlstr}", height=0, width=0)
 
 
-def user_answer_input(question_num):
-    user_answer= st.text_area("",key=f"answer{question_num}")
+
+# Function to get user answer and append it to the list
+def user_answer_input(question_num,max_question_reached):
+    key = f"answer{question_num}"
+    print(st.session_state.user_answers_list)
+    print(max_question_reached,question_num)
+    # Check if the question has been reached or exceeded
+    if question_num==1 and max_question_reached==1:
+        user_answer = st.text_area("", key=key)      
+
+    elif question_num <=max_question_reached:
+        user_answer = st.text_area("", key=key, value=st.session_state.user_answers_list[question_num - 1])
+    else:
+        user_answer=st.text_area("", key=key,disabled=True)
+
     return user_answer
 
+    
 def set_background(color):
     # Using the provided color
     st.markdown(
