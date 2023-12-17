@@ -13,9 +13,9 @@ def home_page():
     st.markdown(format_text(text="<br>Wlecome ",
                             alignment='center',size=40,color="#b93f5f",font_family="Papyrus", font_weight="Bold", emoji="😀<br><br>"),unsafe_allow_html=True)
     
-    st.markdown(format_text(text="Practice Technical & Behavioural Interview Questions<br><br>",
+    st.markdown(format_text(text="Practice Technical & Behavioural Data Analysis Interview Questions<br><br>",
 
-                            alignment='center',size=30,color="#5fb93f",font_family="Courier New", font_weight="Bold", emoji="<br><br>"),unsafe_allow_html=True)
+                            alignment='center',size=30,color="#004225",font_family="Aharouni", font_weight="Bold", emoji="<br><br>"),unsafe_allow_html=True)
     
 # Content of the difficulty page
 def choose_difficulty_page():

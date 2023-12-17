@@ -11,20 +11,16 @@ import numpy as np
 import os 
 
 choosen_num_of_question=5
+generated_data_length=10
 # Function to load data with caching
 @st.cache_data()
 def load_data( choosen_num_of_question = choosen_num_of_question):
-    # Read the dataset
-    dataset = pd.read_excel(os.path.join('data', 'training_dataset.xlsx'))
     # Sample random indices for questions
-    samples_indices = random.sample(range(dataset.shape[0]), choosen_num_of_question)
-    # Get data for the sampled indices
-    category_list, questions_list, expected_answers_list = sample_data(dataset, samples_indices)
-    return dataset, samples_indices, category_list, questions_list, expected_answers_list
-
+    samples_indices = random.sample(range(generated_data_length), choosen_num_of_question)
+    return samples_indices
 
 # Load the data and variables
-dataset, samples_indices, category_list, questions_list, expected_answers_list = load_data()
+samples_indices= load_data()
 st.markdown(custom_css(),unsafe_allow_html=True)
 
 # Initialize session state for question number
@@ -36,19 +32,22 @@ if 'question_number' not in st.session_state:
         
 # Page rendering logic
 if st.session_state.question_number == -1:
-    set_background("black")  # Replace with your desired colors
+    set_background("##F5F5F5")  # Replace with your desired colors
     home_page()
 elif st.session_state.question_number == 0:
     set_background("white")
-    choose_difficulty_page()
+    difficulty=choose_difficulty_page()
+    # Get data for the sampled indices
+    st.session_state.category_list, st.session_state.questions_list, st.session_state.expected_answers_list = sample_data(difficulty,samples_indices)
+
 elif 1 <= st.session_state.question_number <= 5 :
         if st.session_state.max_question_reached<st.session_state.question_number:
             st.session_state.max_question_reached=st.session_state.question_number
-        user_answer=question_page(st.session_state.question_number,category_list,questions_list)
+        user_answer=question_page(st.session_state.question_number,st.session_state.category_list,st.session_state.questions_list)
         st.session_state.user_answers_list[st.session_state.question_number-1]=user_answer
 
 else:
-    final_page(questions_list,st.session_state.user_answers_list,expected_answers_list)
+    final_page(st.session_state.questions_list,st.session_state.user_answers_list,st.session_state.expected_answers_list)
 
 col1, col2, col3 = st.columns(3)
 with col1:

@@ -7,8 +7,8 @@ import pandas as pd
 import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd 
-import random
 from models.functions import train_model_to_generate_data
+
 def check_database_exists():
     #check if the generated data exists before
     for file_name in ['Easy','Medium','Difficult']:
@@ -23,10 +23,11 @@ def decrement_question_number():
     if st.session_state.question_number > 0:
         st.session_state.question_number -= 1
 
-def sample_data(dataset,samples_indices):
+def sample_data(difficulty,samples_indices):
     questions=[]
     categories=[]
     answers=[]
+    dataset= pd.read_excel(os.path.join('data',f'{difficulty}_level_generated_dataset.xlsx'))
     for i in range(len(samples_indices)):
         questions.append(f"{dataset.iloc[samples_indices[i]]['Question']}")
         categories.append(f"{dataset.iloc[samples_indices[i]]['Category']}")
@@ -54,3 +55,5 @@ def evaluate_answer(expected_answer,user_answer):
     print(f"Expected Answer: {user_answer}")
     print(f"User's Answer: {expected_answer}")
     print(f"Cosine similarity score: {similarity[0][0]}")
+
+

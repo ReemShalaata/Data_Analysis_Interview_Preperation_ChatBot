@@ -12,7 +12,7 @@ def train_model_to_generate_data(difficulty_level,num_generated_samples=10):
     difficulty=difficulty_level.capitalize()
     dataset = pd.read_excel(os.path.join('data','training_dataset.xlsx'))
     # Create a new question prompt
-    new_question_prompt = (
+    new_question_prompt =(
     f"As a data analysis interviewer, generate f'{difficulty}' level data analysis interview questions, each covering a different topic. "
     "Provide answers for each question. Structure the output as follows:"
 
@@ -31,8 +31,6 @@ def train_model_to_generate_data(difficulty_level,num_generated_samples=10):
     " 3. The second section of the 'Answer' should provide real-world scenarios and practical examples that directly relate to the 'Question'."
     "This part should illustrate how the candidate might realistically encounter and handle situations relevant to the question,"
     "showcasing their application of skills"
-
-
     )
 
     prompt_examples = ""
