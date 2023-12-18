@@ -71,10 +71,14 @@ def provide_feedback(questions_list,user_answers_list,expected_answers_list):
     stars_list=[]
     feedback=""
     for index,item in enumerate(questions_list):
+        # if the number of words less than 5 give a 0 score 
+        if  len(user_answers_list[index].split())<=5:
+            similarity=0
         # Encoding
-        expected_answer_vec = encode(expected_answers_list[index]).unsqueeze(0).cpu()
-        user_answer_vec = encode(user_answers_list[index]).unsqueeze(0).cpu()
-        similarity = abs(cosine_similarity(expected_answer_vec, user_answer_vec)[0][0])
+        else:
+            expected_answer_vec = encode(expected_answers_list[index]).unsqueeze(0).cpu()
+            user_answer_vec = encode(user_answers_list[index]).unsqueeze(0).cpu()
+            similarity = abs(cosine_similarity(expected_answer_vec, user_answer_vec)[0][0])
         if similarity>0.7:
             feedback="Good job!"
         else:
