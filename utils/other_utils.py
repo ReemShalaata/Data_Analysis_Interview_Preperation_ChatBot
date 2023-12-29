@@ -11,7 +11,7 @@ from models.functions import train_model_to_generate_data
 
 def check_database_exists():
     #check if the generated data exists before
-    for file_name in ['Easy','Medium','Difficult']:
+    for file_name in ['Easy','Medium','Hard']:
         if not os.path.exists(os.path.join('data',file_name)):
             train_model_to_generate_data(file_name)
 
